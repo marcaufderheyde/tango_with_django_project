@@ -1,13 +1,11 @@
 from django.contrib import admin
 from rango.models import Category, Page, Question, Choice
 
-# Register your models here.
-
-admin.site.register(Category)
 class PageAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'url')
 
-admin.site.register(Page, PageAdmin)
+class CategoryAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug':('name',)}
 
 class ChoiceInline(admin.TabularInline):
     model = Choice
@@ -23,4 +21,7 @@ class QuestionAdmin(admin.ModelAdmin):
     list_filter = ['pub_date']
     search_fields = ['question_text']
 
+# Register your models here.
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Page, PageAdmin)
 admin.site.register(Question, QuestionAdmin)
