@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from rango.models import Category, Page
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from rango.models import Category, Page, Choice, Question
 from rango.forms import CategoryForm, PageForm
 from django.urls import reverse
+from django.views import generic
 
 
 def index(request):
@@ -101,17 +102,28 @@ def add_page(request, category_name_slug):
     return render(request, 'rango/add_page.html', context=context_dict)
     
 
-def detail(request, question_id):
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'rango/detail.html'
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'rango/results.html'
+
+def vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
     try:
-        question = Question.objects.get(pk=question_id)
-    except Question.DoesNotExist:
-        raise Http404("Question does not exist")
-    return render(request, 'rango/detail.html', {'question': question})
-
-def results(request, question_id):
-    response = "You're looking at the results of question %s."
-    return HttpResponse(response % question_id)
-
-def vote(request,question_id):
-    return HttpResponse("You're voting on question %s." % question_id)
-
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        # Redisplay the question voting form.
+        return render(request, 'rango/detail.html', {
+            'question': question,
+            'error_message': "You didn't select a choice.",
+        })
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return HttpResponseRedirect(reverse('rango:results', args=(question.id,)))
