@@ -1,5 +1,5 @@
 from django.contrib import admin
-from rango.models import Category, Page, Question, Choice
+from rango.models import Category, Page, UserProfile, Question, Choice
 
 class PageAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'url')
@@ -24,4 +24,5 @@ class QuestionAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Page, PageAdmin)
+admin.site.register(UserProfile)
 admin.site.register(Question, QuestionAdmin)
