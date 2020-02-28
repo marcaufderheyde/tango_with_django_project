@@ -22,8 +22,6 @@ MEDIA_DIR = os.path.join(BASE_DIR, 'media')
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 
-LOGIN_URL = 'rango:login'
-
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Quick-start development settings - unsuitable for production
@@ -48,7 +46,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rango',
+    'registration',
 ]
+
+REGISTRATION_OPEN = True
+
+REGISTRATION_AUTO_LOGIN = True
+
+LOGIN_REDIRECT_URL = 'rango:index'
+
+LOGIN_URL = 'auth_login'
+
+PASSWORD_CHANGE_URL = 'auth_password_change'
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
